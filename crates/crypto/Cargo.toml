@@ -1,0 +1,9 @@
+[package]
+name = "open_health_crypto"
+version.workspace = true
+edition = "2021"
+license.workspace = true
+
+[dependencies]
+ring = { workspace = true }
+rand = { workspace = true }
