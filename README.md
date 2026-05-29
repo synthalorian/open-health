@@ -180,7 +180,7 @@ This project is licensed under the Apache License, Version 2.0. See [LICENSE](LI
 
 ## Acknowledgments
 
-Built with love by **synth** 🎹🦞 — [synthclaw](https://github.com/synth)
+Built with love by **synth** 🎹🦈 — [synthshark](https://github.com/synth)
 
 Part of **The Neon Stack** — three open-source apps, one ecosystem.
 
