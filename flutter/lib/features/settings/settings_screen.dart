@@ -23,27 +23,24 @@ class SettingsScreen extends ConsumerWidget {
           Card(
             child: Column(
               children: [
-                RadioListTile<ThemeMode>(
+                ListTile(
+                  leading: const Icon(Icons.dark_mode),
                   title: const Text('Dark Mode (Synthwave)'),
                   subtitle: const Text('Neon gradients, dark vibes'),
-                  value: ThemeMode.dark,
-                  groupValue: currentMode,
-                  onChanged: (v) {
-                    if (v != null) {
-                      ref.read(themeModeProvider.notifier).setMode(v);
-                    }
-                  },
+                  trailing: currentMode == ThemeMode.dark
+                      ? const Icon(Icons.check_circle, color: Colors.green)
+                      : null,
+                  onTap: () => ref.read(themeModeProvider.notifier).setMode(ThemeMode.dark),
                 ),
-                RadioListTile<ThemeMode>(
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.light_mode),
                   title: const Text('Light Mode'),
                   subtitle: const Text('Clean, minimal interface'),
-                  value: ThemeMode.light,
-                  groupValue: currentMode,
-                  onChanged: (v) {
-                    if (v != null) {
-                      ref.read(themeModeProvider.notifier).setMode(v);
-                    }
-                  },
+                  trailing: currentMode == ThemeMode.light
+                      ? const Icon(Icons.check_circle, color: Colors.green)
+                      : null,
+                  onTap: () => ref.read(themeModeProvider.notifier).setMode(ThemeMode.light),
                 ),
               ],
             ),
@@ -62,16 +59,14 @@ class SettingsScreen extends ConsumerWidget {
                   leading: const Icon(Icons.storage),
                   title: const Text('Database Status'),
                   subtitle: const Text('Connected'),
-                  trailing: const Icon(Icons.check_circle,
-                      color: Colors.green),
+                  trailing: const Icon(Icons.check_circle, color: Colors.green),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.lock),
                   title: const Text('Encryption'),
                   subtitle: const Text('AES-GCM-256'),
-                  trailing: const Icon(Icons.check_circle,
-                      color: Colors.green),
+                  trailing: const Icon(Icons.check_circle, color: Colors.green),
                 ),
               ],
             ),

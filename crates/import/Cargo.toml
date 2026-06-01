@@ -1,0 +1,16 @@
+[package]
+name = "open_health_import"
+version.workspace = true
+edition = "2021"
+license.workspace = true
+
+[dependencies]
+open_health_shared = { workspace = true }
+open_health_db = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+csv = "1"

@@ -99,7 +99,7 @@ pub struct HeartRateSummary {
     pub min_bpm: Option<f64>,
     pub max_bpm: Option<f64>,
     pub resting_bpm: Option<f64>,
-    pub hrv_rMSSD: Option<f64>,
+    pub hrv_rmssd: Option<f64>,
     pub source: Option<String>,
 }
 
@@ -123,7 +123,7 @@ pub struct BodyComposition {
 pub struct GlucoseRecord {
     pub id: Uuid,
     pub timestamp: NaiveDateTime,
-    pub value_mg_dL: f64,
+    pub value_mg_dl: f64,
     pub source: Option<String>,
     pub notes: Option<String>,
 }

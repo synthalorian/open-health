@@ -6,22 +6,49 @@ on:
       - 'v*.*.*'
 
 jobs:
-  release:
-    name: Build & Release
+  release-rust:
+    name: Build Rust Server
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
+
       - name: Build release
-        run: cargo build --release --bin open-health
+        run: cargo build --release --bin open_health_server
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: open-health-${{ matrix.os }}
-          path: target/release/open-health*
+          name: open_health_server-${{ matrix.os }}
+          path: target/release/open_health_server*
+
+  release-flutter:
+    name: Build Flutter APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ./flutter
+
+      - name: Build APK
+        run: flutter build apk --release
+        working-directory: ./flutter
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: open_health-android
+          path: flutter/build/app/outputs/flutter-apk/app-release.apk
