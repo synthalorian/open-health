@@ -139,7 +139,7 @@ fn process_request(request: IpcRequest, db: &HealthDatabase) -> IpcResponse {
                             min_bpm: Some(min),
                             max_bpm: Some(max),
                             resting_bpm: None,
-                            hrv_rMSSD: None,
+                            hrv_rmssd: None,
                             source: None,
                         });
                     }
@@ -176,7 +176,6 @@ fn process_request(request: IpcRequest, db: &HealthDatabase) -> IpcResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Arc;
 
     #[test]
     fn test_process_ping() {

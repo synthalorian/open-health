@@ -40,53 +40,70 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
 class AppTheme {
   AppTheme._();
 
-  // Synthwave dark theme
+  // Synthwave neon palette
+  static const _electricPurple = Color(0xFF8F00FF);
+  static const _hotPink = Color(0xFFFF7EDB);
+  static const _neonYellow = Color(0xFFF3E70F);
+  static const _darkBg = Color(0xFF0A0014);
+  static const _cardBg = Color(0xFF1A0033);
+  static const _navBg = Color(0xFF140026);
+
   static final dark = ThemeData(
     brightness: Brightness.dark,
     useMaterial3: true,
-    colorScheme: ColorScheme.dark(
-      primary: const Color(0xFFFF6B6B),
-      secondary: const Color(0xFF4ECDC4),
-      tertiary: const Color(0xFFFFD93D),
-      surface: const Color(0xFF1A1A2E),
+    colorScheme: const ColorScheme.dark(
+      primary: _electricPurple,
+      secondary: _hotPink,
+      tertiary: _neonYellow,
+      surface: _cardBg,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onTertiary: Colors.black,
     ),
-    scaffoldBackgroundColor: const Color(0xFF0F0F23),
+    scaffoldBackgroundColor: _darkBg,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF1A1A2E),
-      foregroundColor: Color(0xFFFF6B6B),
+      backgroundColor: _cardBg,
+      foregroundColor: _hotPink,
       elevation: 0,
     ),
     cardTheme: CardThemeData(
-      color: const Color(0xFF1A1A2E).withValues(alpha: 0.8),
+      color: _cardBg.withValues(alpha: 0.9),
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: const Color(0xFFFF6B6B).withValues(alpha: 0.3),
+        side: const BorderSide(
+          color: _electricPurple,
           width: 1,
         ),
       ),
     ),
-    navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: const Color(0xFF16213E),
-      indicatorColor: const Color(0xFFFF6B6B).withValues(alpha: 0.2),
+    navigationBarTheme: const NavigationBarThemeData(
+      backgroundColor: _navBg,
+      indicatorColor: _electricPurple,
+      indicatorShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+    ),
+    textTheme: const TextTheme(
+      headlineSmall: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      titleMedium: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white70),
     ),
   );
 
-  // Clean light theme
   static final light = ThemeData(
     brightness: Brightness.light,
     useMaterial3: true,
-    colorScheme: ColorScheme.light(
-      primary: const Color(0xFF2563EB),
-      secondary: const Color(0xFF059669),
-      tertiary: const Color(0xFFD97706),
+    colorScheme: const ColorScheme.light(
+      primary: _electricPurple,
+      secondary: _hotPink,
+      tertiary: _neonYellow,
       surface: Colors.white,
     ),
     scaffoldBackgroundColor: const Color(0xFFF8FAFC),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
-      foregroundColor: Color(0xFF2563EB),
+      foregroundColor: _electricPurple,
       elevation: 0,
     ),
     cardTheme: CardThemeData(

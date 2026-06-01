@@ -10,6 +10,8 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final asyncData = ref.watch(dashboardDataProvider);
+    final hrAsync = ref.watch(heartRateRecordsProvider);
+    final sleepAsync = ref.watch(sleepRecordsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -17,7 +19,11 @@ class DashboardScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.invalidate(dashboardDataProvider),
+            onPressed: () {
+              ref.invalidate(dashboardDataProvider);
+              ref.invalidate(heartRateRecordsProvider);
+              ref.invalidate(sleepRecordsProvider);
+            },
           ),
         ],
       ),
@@ -45,7 +51,11 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
         data: (data) => RefreshIndicator(
-          onRefresh: () => ref.refresh(dashboardDataProvider.future),
+          onRefresh: () async {
+            ref.invalidate(dashboardDataProvider);
+            ref.invalidate(heartRateRecordsProvider);
+            ref.invalidate(sleepRecordsProvider);
+          },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
@@ -120,25 +130,33 @@ class DashboardScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Heart Rate Chart placeholder
+                // Heart Rate Chart
                 Text('Heart Rate (Last 7 Days)',
                     style: theme.textTheme.titleMedium
                         ?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 SizedBox(
                   height: 200,
-                  child: _HeartRateChart(),
+                  child: hrAsync.when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const _PlaceholderChart(),
+                    data: (records) => _HeartRateChart(records: records),
+                  ),
                 ),
                 const SizedBox(height: 24),
 
-                // Sleep chart placeholder
+                // Sleep chart
                 Text('Sleep Duration (Last 7 Days)',
                     style: theme.textTheme.titleMedium
                         ?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 SizedBox(
                   height: 200,
-                  child: _SleepChart(),
+                  child: sleepAsync.when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => const _PlaceholderChart(),
+                    data: (records) => _SleepChart(records: records),
+                  ),
                 ),
               ],
             ),
@@ -184,13 +202,32 @@ class _MetricCard extends StatelessWidget {
   }
 }
 
+class _PlaceholderChart extends StatelessWidget {
+  const _PlaceholderChart();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'No data available',
+        style: TextStyle(color: Theme.of(context).hintColor),
+      ),
+    );
+  }
+}
+
 class _HeartRateChart extends StatelessWidget {
+  final List<HealthRecord> records;
+  const _HeartRateChart({required this.records});
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final spots = List.generate(7, (i) {
-      return FlSpot(i.toDouble(), 55 + (i * 3.5) + (i.isEven ? 5 : -3));
-    });
+    if (records.isEmpty) return const _PlaceholderChart();
+
+    final spots = records.asMap().entries.map((e) {
+      return FlSpot(e.key.toDouble(), e.value.value);
+    }).toList();
 
     return LineChart(
       LineChartData(
@@ -228,9 +265,14 @@ class _HeartRateChart extends StatelessWidget {
 }
 
 class _SleepChart extends StatelessWidget {
+  final List<HealthRecord> records;
+  const _SleepChart({required this.records});
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    if (records.isEmpty) return const _PlaceholderChart();
+
     return BarChart(
       BarChartData(
         gridData: FlGridData(
@@ -248,16 +290,16 @@ class _SleepChart extends StatelessWidget {
           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(show: false),
-        barGroups: List.generate(7, (i) {
-          return BarChartGroupData(x: i, barRods: [
+        barGroups: records.asMap().entries.map((e) {
+          return BarChartGroupData(x: e.key, barRods: [
             BarChartRodData(
-              toY: 6.0 + (i * 0.3),
+              toY: e.value.value,
               color: const Color(0xFF4ECDC4),
               width: 12,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
             ),
           ]);
-        }),
+        }).toList(),
       ),
     );
   }

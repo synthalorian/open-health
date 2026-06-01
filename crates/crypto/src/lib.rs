@@ -16,6 +16,22 @@ pub const SALT_LEN: usize = 32;
 pub const NONCE_LEN: usize = 12; // 96 bits for AES-GCM
 pub const KEY_LEN: usize = 32; // AES-256
 
+/// Decryption failure.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CryptoError {
+    DecryptionFailed,
+}
+
+impl std::fmt::Display for CryptoError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CryptoError::DecryptionFailed => write!(f, "decryption failed"),
+        }
+    }
+}
+
+impl std::error::Error for CryptoError {}
+
 /// A passphrase-derived encryption key, zeroed on drop.
 pub struct MasterKey([u8; KEY_LEN]);
 
@@ -68,8 +84,7 @@ impl MasterKey {
         let mut nonce = [0u8; NONCE_LEN];
         rng.fill(&mut nonce).expect("RNG failed");
 
-        let unbound_key = aead::UnboundKey::new(&aead::AES_256_GCM, &self.0)
-            .expect("Valid key");
+        let unbound_key = aead::UnboundKey::new(&aead::AES_256_GCM, &self.0).expect("Valid key");
         let key = aead::LessSafeKey::new(unbound_key);
 
         let nonce_for_encrypt = aead::Nonce::assume_unique_for_key(nonce);
@@ -81,16 +96,19 @@ impl MasterKey {
     }
 
     /// Decrypt ciphertext given the nonce.
-    pub fn decrypt(&self, nonce: &[u8; NONCE_LEN], ciphertext: &[u8]) -> Result<Vec<u8>, ()> {
-        let unbound_key =
-            aead::UnboundKey::new(&aead::AES_256_GCM, &self.0).expect("Valid key");
+    pub fn decrypt(
+        &self,
+        nonce: &[u8; NONCE_LEN],
+        ciphertext: &[u8],
+    ) -> Result<Vec<u8>, CryptoError> {
+        let unbound_key = aead::UnboundKey::new(&aead::AES_256_GCM, &self.0).expect("Valid key");
         let key = aead::LessSafeKey::new(unbound_key);
 
         let nonce_for_decrypt = aead::Nonce::assume_unique_for_key(*nonce);
         let mut in_out = ciphertext.to_vec();
         let plaintext = key
             .open_in_place(nonce_for_decrypt, aead::Aad::empty(), &mut in_out)
-            .map_err(|_| ())?;
+            .map_err(|_| CryptoError::DecryptionFailed)?;
         Ok(plaintext.to_vec())
     }
 }
