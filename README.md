@@ -231,3 +231,11 @@ Part of **The Neon Stack** — three open-source apps, one ecosystem.
 ---
 
 *Privacy is a right. Health data shouldn't be an exception.*
+
+---
+
+## ☕ Support the Developer
+
+If this project saved you time, solved a problem, or just made your day a little more neon, you can fuel the next one:
+
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://buymeacoffee.com/synthalorian)
