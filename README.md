@@ -96,7 +96,7 @@ Every health app wants your data. Apple Health, Google Fit, Fitbit, Oura, Whoop,
 
 ```bash
 # Clone the repo
-git clone https://github.com/synthalorian 🎹🤺/open_health.git
+git clone https://github.com/synth/open_health.git
 cd open_health
 
 # Build the Rust workspace
@@ -224,7 +224,7 @@ This project is licensed under the **Apache License, Version 2.0**. See [LICENSE
 
 ## Acknowledgments
 
-Built with love by **synthalorian 🎹🤺** 🎹🦞 — [synthclaw](https://github.com/synthalorian 🎹🤺)
+Built with love by **synth** 🎹🦞 — [synthclaw](https://github.com/synth)
 
 Part of **The Neon Stack** — three open-source apps, one ecosystem.
 
