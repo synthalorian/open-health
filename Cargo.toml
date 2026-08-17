@@ -6,9 +6,9 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
-authors = ["synth <synth@neonstack.dev>"]
-repository = "https://github.com/synth/open_health"
-homepage = "https://github.com/synth/open_health#readme"
+authors = ["synthalorian 🎹🤺 <synthalorian 🎹🤺@neonstack.dev>"]
+repository = "https://github.com/synthalorian 🎹🤺/open_health"
+homepage = "https://github.com/synthalorian 🎹🤺/open_health#readme"
 keywords = ["health", "privacy", "local-first", "sqlite"]
 categories = ["database", "cryptography"]
 
