@@ -26,8 +26,8 @@ async fn main() -> anyhow::Result<()> {
 
     // Database path and passphrase (in production, passphrase comes from Flutter via socket handshake)
     let db_path = std::env::var("OPEN_HEALTH_DB").unwrap_or_else(|_| "data/open_health.db".into());
-    let passphrase = std::env::var("OPEN_HEALTH_PASSPHRASE")
-        .unwrap_or_else(|_| "default-dev-passphrase".into());
+    let passphrase =
+        std::env::var("OPEN_HEALTH_PASSPHRASE").unwrap_or_else(|_| "default-dev-passphrase".into());
 
     let db = std::sync::Arc::new(
         HealthDatabase::open(&db_path, &passphrase)
@@ -126,11 +126,16 @@ fn process_request(request: IpcRequest, db: &HealthDatabase) -> IpcResponse {
 
         IpcRequest::GetHeartRateSummary { from, to } => {
             // Derive heart rate summary from health records
-            match db.get_records(&RecordType::HeartRate, from.and_hms_opt(0, 0, 0).unwrap(), to.and_hms_opt(23, 59, 59).unwrap()) {
+            match db.get_records(
+                &RecordType::HeartRate,
+                from.and_hms_opt(0, 0, 0).unwrap(),
+                to.and_hms_opt(23, 59, 59).unwrap(),
+            ) {
                 Ok(records) => {
                     let mut summaries = Vec::new();
                     if !records.is_empty() {
-                        let avg = records.iter().map(|r| r.value).sum::<f64>() / records.len() as f64;
+                        let avg =
+                            records.iter().map(|r| r.value).sum::<f64>() / records.len() as f64;
                         let min = records.iter().map(|r| r.value).fold(f64::MAX, f64::min);
                         let max = records.iter().map(|r| r.value).fold(f64::MIN, f64::max);
                         summaries.push(HeartRateSummary {

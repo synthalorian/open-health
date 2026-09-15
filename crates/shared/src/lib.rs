@@ -3,7 +3,11 @@
 //! All structs shared between the backend, IPC layer, and frontend.
 
 #![forbid(unsafe_code)]
-#![allow(clippy::upper_case_acronyms, clippy::similar_names, clippy::struct_field_names)]
+#![allow(
+    clippy::upper_case_acronyms,
+    clippy::similar_names,
+    clippy::struct_field_names
+)]
 
 use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Serialize};
@@ -35,16 +39,16 @@ pub struct HealthRecord {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum RecordType {
     HeartRate,
-    Hrv,                     // Heart Rate Variability (rMSSD ms)
+    Hrv, // Heart Rate Variability (rMSSD ms)
     RestingHeartRate,
     SleepDuration,
-    SleepQuality,            // 0–100 score
-    SleepOnset,              // Time fell asleep (epoch seconds)
-    SleepOffset,             // Time woke up (epoch seconds)
-    DeepSleep,               // Minutes
-    RemSleep,                // Minutes
-    LightSleep,              // Minutes
-    AwakeTime,               // Minutes awake during night
+    SleepQuality, // 0–100 score
+    SleepOnset,   // Time fell asleep (epoch seconds)
+    SleepOffset,  // Time woke up (epoch seconds)
+    DeepSleep,    // Minutes
+    RemSleep,     // Minutes
+    LightSleep,   // Minutes
+    AwakeTime,    // Minutes awake during night
     BodyMass,
     BodyFat,
     BodyWater,
@@ -61,7 +65,7 @@ pub enum RecordType {
     ModerateActivity,
     VigorousActivity,
     Stress,
-    Spo2,                    // Blood oxygen saturation %
+    Spo2, // Blood oxygen saturation %
     RespiratoryRate,
     Temperature,
     SkinTemperature,
@@ -78,7 +82,7 @@ pub struct SleepRecord {
     pub id: Uuid,
     pub date: NaiveDate,
     pub duration_minutes: u32,
-    pub quality_score: Option<u8>,     // 0–100
+    pub quality_score: Option<u8>, // 0–100
     pub deep_sleep_min: Option<u32>,
     pub rem_sleep_min: Option<u32>,
     pub light_sleep_min: Option<u32>,
@@ -146,7 +150,7 @@ pub struct ActivitySummary {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ImportSession {
     pub id: Uuid,
-    pub source_name: String,         // "fitbit", "oura", "apple_health", etc.
+    pub source_name: String, // "fitbit", "oura", "apple_health", etc.
     pub file_name: String,
     pub record_count: u32,
     pub imported_at: NaiveDateTime,
@@ -166,7 +170,7 @@ pub enum ImportStatus {
 pub struct Device {
     pub id: Uuid,
     pub name: String,
-    pub device_type: String,         // "fitbit_charge", "oura_ring", "garmin", etc.
+    pub device_type: String, // "fitbit_charge", "oura_ring", "garmin", etc.
     pub last_synced: Option<NaiveDateTime>,
 }
 

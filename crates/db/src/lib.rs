@@ -55,13 +55,20 @@ impl HealthDatabase {
         };
 
         let key = MasterKey::derive(passphrase, &salt);
-        Ok(Self { conn: Mutex::new(conn), key, salt })
+        Ok(Self {
+            conn: Mutex::new(conn),
+            key,
+            salt,
+        })
     }
 
     fn load_salt(conn: &Connection) -> Result<[u8; 32]> {
         let hex_str: String = conn
             .query_row(
-                "SELECT value FROM meta WHERE key = 'crypto_salt'", [], |row| row.get(0))
+                "SELECT value FROM meta WHERE key = 'crypto_salt'",
+                [],
+                |row| row.get(0),
+            )
             .map_err(|_| DbError::NotFound("crypto_salt".into()))?;
         let mut salt = [0u8; 32];
         hex::decode_to_slice(hex_str, &mut salt).map_err(|_| DbError::Crypto)?;
@@ -112,10 +119,9 @@ impl HealthDatabase {
              ORDER BY timestamp ASC",
         )?;
 
-        let rows = stmt.query_map(
-            params![type_str, from.to_string(), to.to_string()],
-            |row| Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?)),
-        )?;
+        let rows = stmt.query_map(params![type_str, from.to_string(), to.to_string()], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+        })?;
 
         let mut records = Vec::new();
         for row in rows {
@@ -123,7 +129,10 @@ impl HealthDatabase {
             let ciphertext = hex::decode(&hex_cipher).map_err(|_| DbError::Crypto)?;
             let mut nonce = [0u8; 12];
             hex::decode_to_slice(&hex_nonce, &mut nonce).map_err(|_| DbError::Crypto)?;
-            let plaintext = self.key.decrypt(&nonce, &ciphertext).map_err(|_| DbError::Crypto)?;
+            let plaintext = self
+                .key
+                .decrypt(&nonce, &ciphertext)
+                .map_err(|_| DbError::Crypto)?;
             records.push(serde_json::from_slice(&plaintext)?);
         }
         Ok(records)
@@ -153,7 +162,11 @@ impl HealthDatabase {
         Ok(())
     }
 
-    pub fn get_sleep_records(&self, from: chrono::NaiveDate, to: chrono::NaiveDate) -> Result<Vec<SleepRecord>> {
+    pub fn get_sleep_records(
+        &self,
+        from: chrono::NaiveDate,
+        to: chrono::NaiveDate,
+    ) -> Result<Vec<SleepRecord>> {
         let conn = self.conn.lock().unwrap();
         let mut stmt = conn.prepare(
             "SELECT encrypted_data, nonce FROM sleep_records WHERE date >= ?1 AND date <= ?2 ORDER BY date ASC",
@@ -169,7 +182,10 @@ impl HealthDatabase {
             let ciphertext = hex::decode(&hex_cipher).map_err(|_| DbError::Crypto)?;
             let mut nonce = [0u8; 12];
             hex::decode_to_slice(&hex_nonce, &mut nonce).map_err(|_| DbError::Crypto)?;
-            let plaintext = self.key.decrypt(&nonce, &ciphertext).map_err(|_| DbError::Crypto)?;
+            let plaintext = self
+                .key
+                .decrypt(&nonce, &ciphertext)
+                .map_err(|_| DbError::Crypto)?;
             records.push(serde_json::from_slice(&plaintext)?);
         }
         Ok(records)
@@ -207,7 +223,8 @@ impl HealthDatabase {
                 file_name: row.get(2)?,
                 record_count: row.get(3)?,
                 imported_at: row.get::<_, String>(4)?.parse().unwrap_or_default(),
-                status: serde_json::from_str(&row.get::<_, String>(5)?).unwrap_or(ImportStatus::Failed("unknown".into())),
+                status: serde_json::from_str(&row.get::<_, String>(5)?)
+                    .unwrap_or(ImportStatus::Failed("unknown".into())),
             })
         })?;
 
@@ -220,9 +237,18 @@ impl HealthDatabase {
 
     pub fn delete_import_session(&self, id: Uuid) -> Result<()> {
         let conn = self.conn.lock().unwrap();
-        conn.execute("DELETE FROM import_sessions WHERE id = ?1", params![id.to_string()])?;
-        conn.execute("DELETE FROM health_records WHERE import_id = ?1", params![id.to_string()])?;
-        conn.execute("DELETE FROM sleep_records WHERE import_id = ?1", params![id.to_string()])?;
+        conn.execute(
+            "DELETE FROM import_sessions WHERE id = ?1",
+            params![id.to_string()],
+        )?;
+        conn.execute(
+            "DELETE FROM health_records WHERE import_id = ?1",
+            params![id.to_string()],
+        )?;
+        conn.execute(
+            "DELETE FROM sleep_records WHERE import_id = ?1",
+            params![id.to_string()],
+        )?;
         Ok(())
     }
 
@@ -240,7 +266,10 @@ impl HealthDatabase {
         let new_salt = MasterKey::generate_salt();
         let new_key = MasterKey::derive(new_passphrase, &new_salt);
         let conn = self.conn.lock().unwrap();
-        conn.execute("UPDATE meta SET value = ?1 WHERE key = 'crypto_salt'", params![hex::encode(new_salt)])?;
+        conn.execute(
+            "UPDATE meta SET value = ?1 WHERE key = 'crypto_salt'",
+            params![hex::encode(new_salt)],
+        )?;
         self.key = new_key;
         self.salt = new_salt;
         Ok(())
@@ -249,7 +278,11 @@ impl HealthDatabase {
     pub fn verify_stored_passphrase(&self, passphrase: &str) -> bool {
         let conn = self.conn.lock().unwrap();
         let hash_hex: Result<String> = conn
-            .query_row("SELECT value FROM meta WHERE key = 'passphrase_hash'", [], |row| row.get(0))
+            .query_row(
+                "SELECT value FROM meta WHERE key = 'passphrase_hash'",
+                [],
+                |row| row.get(0),
+            )
             .map_err(|e| e.into());
         drop(conn);
         match hash_hex {

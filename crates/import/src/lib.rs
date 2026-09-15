@@ -48,7 +48,14 @@ impl ColumnMapping {
 
         let timestamp = detect_column(
             &header_map,
-            &["timestamp", "date", "datetime", "time", "date_time", "created_at"],
+            &[
+                "timestamp",
+                "date",
+                "datetime",
+                "time",
+                "date_time",
+                "created_at",
+            ],
         )?;
         let value = detect_column(
             &header_map,
@@ -118,9 +125,18 @@ pub fn import_csv<R: Read>(
         .get(&mapping.record_type)
         .ok_or_else(|| ImportError::MissingColumn(mapping.record_type.clone()))?;
 
-    let unit_idx = mapping.unit.as_ref().and_then(|u| header_idx.get(u).copied());
-    let source_idx = mapping.source.as_ref().and_then(|s| header_idx.get(s).copied());
-    let notes_idx = mapping.notes.as_ref().and_then(|n| header_idx.get(n).copied());
+    let unit_idx = mapping
+        .unit
+        .as_ref()
+        .and_then(|u| header_idx.get(u).copied());
+    let source_idx = mapping
+        .source
+        .as_ref()
+        .and_then(|s| header_idx.get(s).copied());
+    let notes_idx = mapping
+        .notes
+        .as_ref()
+        .and_then(|n| header_idx.get(n).copied());
 
     let import_id = Uuid::new_v4();
     let mut record_count = 0u32;
@@ -149,7 +165,9 @@ pub fn import_csv<R: Read>(
             .and_then(|i| record.get(i))
             .unwrap_or("")
             .to_string();
-        let source = source_idx.and_then(|i| record.get(i)).map(|s| s.to_string());
+        let source = source_idx
+            .and_then(|i| record.get(i))
+            .map(|s| s.to_string());
         let notes = notes_idx.and_then(|i| record.get(i)).map(|s| s.to_string());
 
         let health_record = HealthRecord {
@@ -229,9 +247,7 @@ fn parse_record_type(s: &str) -> RecordType {
         "temperature" | "temp" => RecordType::Temperature,
         "respiratory_rate" | "resp_rate" | "breathing_rate" => RecordType::RespiratoryRate,
         "blood_pressure_systolic" | "bp_sys" | "systolic" => RecordType::BloodPressureSystolic,
-        "blood_pressure_diastolic" | "bp_dia" | "diastolic" => {
-            RecordType::BloodPressureDiastolic
-        }
+        "blood_pressure_diastolic" | "bp_dia" | "diastolic" => RecordType::BloodPressureDiastolic,
         _ => RecordType::Custom(s.to_string()),
     }
 }
@@ -243,8 +259,14 @@ mod tests {
 
     #[test]
     fn test_parse_record_type() {
-        assert!(matches!(parse_record_type("heart_rate"), RecordType::HeartRate));
-        assert!(matches!(parse_record_type("Sleep Duration"), RecordType::SleepDuration));
+        assert!(matches!(
+            parse_record_type("heart_rate"),
+            RecordType::HeartRate
+        ));
+        assert!(matches!(
+            parse_record_type("Sleep Duration"),
+            RecordType::SleepDuration
+        ));
         assert!(matches!(
             parse_record_type("custom_metric"),
             RecordType::Custom(_)
