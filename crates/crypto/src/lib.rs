@@ -38,9 +38,7 @@ pub struct MasterKey([u8; KEY_LEN]);
 impl Drop for MasterKey {
     fn drop(&mut self) {
         // Zero out the key material
-        for byte in &mut self.0 {
-            *byte = 0;
-        }
+        self.0.fill(0);
     }
 }
 
