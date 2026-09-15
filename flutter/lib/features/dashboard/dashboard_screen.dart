@@ -113,7 +113,7 @@ class DashboardScreen extends ConsumerWidget {
                       child: _MetricCard(
                         icon: Icons.local_fire_department,
                         label: 'Calories',
-                        value: '${data.calories.toStringAsFixed(0)}',
+                        value: data.calories.toStringAsFixed(0),
                         color: const Color(0xFFFF6B6B),
                       ),
                     ),
@@ -139,7 +139,7 @@ class DashboardScreen extends ConsumerWidget {
                   height: 200,
                   child: hrAsync.when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const _PlaceholderChart(),
+                    error: (_, _) => const _PlaceholderChart(),
                     data: (records) => _HeartRateChart(records: records),
                   ),
                 ),
@@ -154,7 +154,7 @@ class DashboardScreen extends ConsumerWidget {
                   height: 200,
                   child: sleepAsync.when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const _PlaceholderChart(),
+                    error: (_, _) => const _PlaceholderChart(),
                     data: (records) => _SleepChart(records: records),
                   ),
                 ),
