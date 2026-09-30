@@ -224,7 +224,6 @@ This project is licensed under the **Apache License, Version 2.0**. See [LICENSE
 
 ## Acknowledgments
 
-Built with love by **synth** ⚫🦞 — [blackclaw](https://github.com/synth)
 
 Part of **The Neon Stack** — three open-source apps, one ecosystem.
 
