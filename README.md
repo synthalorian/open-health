@@ -1,3 +1,5 @@
+![open-health](.github/preview.png)
+
 # open_health
 
 <p align="center">
