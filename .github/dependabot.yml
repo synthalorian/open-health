@@ -20,13 +20,7 @@ updates:
           - "minor"
           - "patch"
   - package-ecosystem: "cargo"
-    directories:
-      - "/"
-      - "/crates/crypto"
-      - "/crates/db"
-      - "/crates/import"
-      - "/crates/server"
-      - "/crates/shared"
+    directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
